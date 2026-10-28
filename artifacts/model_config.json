@@ -1,0 +1,196 @@
+{
+  "project": "Plant Disease Classification",
+  "task": "single-label image classification",
+  "num_classes": 38,
+  "class_names": [
+    "Apple___Apple_scab",
+    "Apple___Black_rot",
+    "Apple___Cedar_apple_rust",
+    "Apple___healthy",
+    "Blueberry___healthy",
+    "Cherry_(including_sour)___Powdery_mildew",
+    "Cherry_(including_sour)___healthy",
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot",
+    "Corn_(maize)___Common_rust_",
+    "Corn_(maize)___Northern_Leaf_Blight",
+    "Corn_(maize)___healthy",
+    "Grape___Black_rot",
+    "Grape___Esca_(Black_Measles)",
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)",
+    "Grape___healthy",
+    "Orange___Haunglongbing_(Citrus_greening)",
+    "Peach___Bacterial_spot",
+    "Peach___healthy",
+    "Pepper,_bell___Bacterial_spot",
+    "Pepper,_bell___healthy",
+    "Potato___Early_blight",
+    "Potato___Late_blight",
+    "Potato___healthy",
+    "Raspberry___healthy",
+    "Soybean___healthy",
+    "Squash___Powdery_mildew",
+    "Strawberry___Leaf_scorch",
+    "Strawberry___healthy",
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
+    "Tomato___healthy"
+  ],
+  "class_to_idx": {
+    "Apple___Apple_scab": 0,
+    "Apple___Black_rot": 1,
+    "Apple___Cedar_apple_rust": 2,
+    "Apple___healthy": 3,
+    "Blueberry___healthy": 4,
+    "Cherry_(including_sour)___Powdery_mildew": 5,
+    "Cherry_(including_sour)___healthy": 6,
+    "Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot": 7,
+    "Corn_(maize)___Common_rust_": 8,
+    "Corn_(maize)___Northern_Leaf_Blight": 9,
+    "Corn_(maize)___healthy": 10,
+    "Grape___Black_rot": 11,
+    "Grape___Esca_(Black_Measles)": 12,
+    "Grape___Leaf_blight_(Isariopsis_Leaf_Spot)": 13,
+    "Grape___healthy": 14,
+    "Orange___Haunglongbing_(Citrus_greening)": 15,
+    "Peach___Bacterial_spot": 16,
+    "Peach___healthy": 17,
+    "Pepper,_bell___Bacterial_spot": 18,
+    "Pepper,_bell___healthy": 19,
+    "Potato___Early_blight": 20,
+    "Potato___Late_blight": 21,
+    "Potato___healthy": 22,
+    "Raspberry___healthy": 23,
+    "Soybean___healthy": 24,
+    "Squash___Powdery_mildew": 25,
+    "Strawberry___Leaf_scorch": 26,
+    "Strawberry___healthy": 27,
+    "Tomato___Bacterial_spot": 28,
+    "Tomato___Early_blight": 29,
+    "Tomato___Late_blight": 30,
+    "Tomato___Leaf_Mold": 31,
+    "Tomato___Septoria_leaf_spot": 32,
+    "Tomato___Spider_mites Two-spotted_spider_mite": 33,
+    "Tomato___Target_Spot": 34,
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus": 35,
+    "Tomato___Tomato_mosaic_virus": 36,
+    "Tomato___healthy": 37
+  },
+  "model_file": "model.pt",
+  "preprocessing_pipeline_file": "preprocessing_pipeline.joblib",
+  "class_mapping_file": "class_mapping.json",
+  "model_config": {
+    "conv_channels": [
+      32,
+      64,
+      128
+    ],
+    "hidden_units": [
+      256,
+      64
+    ],
+    "num_classes": 38,
+    "in_channels": 3,
+    "dropout": 0.4,
+    "dropout_hidden": 0.3
+  },
+  "best_hyperparameters": {
+    "n_conv_layers": 3,
+    "n_fc_layers": 2,
+    "fc_units_1": 256,
+    "fc_units_2": 64,
+    "learning_rate": 0.005583595034170054
+  },
+  "input": {
+    "image_size": [
+      256,
+      256
+    ],
+    "channels": 3,
+    "color_mode": "RGB",
+    "layout": "NCHW",
+    "dtype": "float32",
+    "mean": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "std": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "value_range": [
+      -1.0,
+      1.0
+    ],
+    "batch_dimension_required": true
+  },
+  "preprocessing": {
+    "type": "ImagePreprocessingPipeline",
+    "image_size": [
+      256,
+      256
+    ],
+    "channels": 3,
+    "color_mode": "RGB",
+    "output_layout": "CHW",
+    "output_dtype": "float32",
+    "normalization": "pixel / 255, then (x - mean) / std",
+    "mean": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "std": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "value_range": [
+      -1.0,
+      1.0
+    ],
+    "resize": "stretch to image_size (no center crop)",
+    "augmentation": {
+      "random_horizontal_flip_prob": 0.5,
+      "random_rotation_degrees": 10.0,
+      "applied_only_during_training": true
+    }
+  },
+  "training": {
+    "seed": 42,
+    "optimizer": "AdamW",
+    "weight_decay": 0.0001,
+    "scheduler": "CosineAnnealingLR",
+    "loss": "CrossEntropyLoss",
+    "batch_size": 64,
+    "epochs_planned": 100,
+    "epochs_run": 100,
+    "best_epoch": 99,
+    "train_images": 70295,
+    "validation_images": 14057,
+    "test_images": 3515
+  },
+  "test_metrics": {
+    "accuracy_percent": 99.06116642958747,
+    "macro_precision": 0.9905795635286713,
+    "macro_recall": 0.9903842724578147,
+    "macro_f1": 0.990424497546689,
+    "weighted_f1": 0.9905838003184763,
+    "n_test_images": 3515
+  },
+  "library_versions": {
+    "torch": "2.13.0+cu132",
+    "torchvision": "0.28.0+cu132",
+    "numpy": "2.5.2",
+    "pillow": "12.1.0",
+    "joblib": "1.5.3"
+  }
+}

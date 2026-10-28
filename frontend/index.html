@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Classification</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-leaf"></i>
+                    Plant Disease Classifier
+                </h1>
+                <p class="subtitle">AI-Powered Plant Health Diagnosis</p>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="card upload-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-leaf"></i> Select Plant Leaf Image</h2>
+                </div>
+                <div class="card-body">
+                    <div class="input-methods">
+                        <button class="method-btn active" id="uploadMethodBtn">
+                            <i class="fas fa-upload"></i> Upload Image
+                        </button>
+                        <button class="method-btn" id="cameraMethodBtn">
+                            <i class="fas fa-camera"></i> Capture from Camera
+                        </button>
+                    </div>
+
+                    <div id="uploadSection">
+                        <div class="upload-area" id="uploadArea">
+                            <input type="file" id="fileInput" accept="image/*" hidden>
+                            <div class="upload-content" id="uploadContent">
+                                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                                <p class="upload-text">Drag & drop your image here</p>
+                                <p class="upload-subtext">or click to browse</p>
+                                <p class="upload-formats">Supports: JPG, PNG, JPEG</p>
+                            </div>
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImg" src="" alt="Preview">
+                                <button class="remove-btn" id="removeBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="cameraSection" style="display: none;">
+                        <div class="camera-container">
+                            <video id="cameraVideo" autoplay playsinline></video>
+                            <canvas id="cameraCanvas" style="display: none;"></canvas>
+                            <div class="camera-controls">
+                                <button class="camera-btn" id="switchCameraBtn" title="Switch Camera">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                                <button class="camera-capture-btn" id="captureBtn">
+                                    <i class="fas fa-camera"></i>
+                                </button>
+                                <button class="camera-btn" id="closeCameraBtn" title="Close Camera">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="captured-preview" id="capturedPreview" style="display: none;">
+                            <img id="capturedImg" src="" alt="Captured">
+                            <div class="captured-actions">
+                                <button class="captured-action-btn" id="retakeBtn">
+                                    <i class="fas fa-redo"></i> Retake Photo
+                                </button>
+                                <button class="captured-action-btn remove" id="removeCapturedBtn">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="predict-btn" id="predictBtn" disabled>
+                        <i class="fas fa-search"></i>
+                        Analyze Plant Disease
+                    </button>
+                </div>
+            </div>
+
+            <div class="card results-card" id="resultsCard" style="display: none;">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-line"></i> Prediction Results</h2>
+                </div>
+                <div class="card-body">
+                    <div class="main-prediction">
+                        <div class="prediction-label">Disease Detected:</div>
+                        <div class="prediction-class" id="predictedClass"></div>
+                        <div class="confidence">
+                            <span class="confidence-label">Confidence:</span>
+                            <span class="confidence-value" id="confidenceValue"></span>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill"></div>
+                        </div>
+                        <div class="disease-description" id="diseaseDescription"></div>
+                    </div>
+
+                    <div class="top-predictions">
+                        <h3><i class="fas fa-list-ol"></i> Top 3 Predictions</h3>
+                        <div class="prediction-list" id="predictionList">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+                <div class="loading-spinner">
+                    <i class="fas fa-leaf fa-spin"></i>
+                    <p>Analyzing your plant leaf...</p>
+                </div>
+            </div>
+
+            <div class="error-toast" id="errorToast" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorMessage"></span>
+                <button class="toast-close" id="toastClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 Plant Disease Classification | Powered by PyTorch & FastAPI</p>
+        </footer>
+    </div>
+
+    <button class="info-float-btn" id="infoFloatBtn" title="Model Information">
+        <i class="fas fa-info-circle"></i>
+    </button>
+
+    <div class="modal-overlay" id="modelInfoModal" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2><i class="fas fa-brain"></i> Model Information</h2>
+                <button class="modal-close" id="modalCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <section class="info-section">
+                    <h3>Model Overview</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Model Name:</span> <span class="info-value">Plant Disease Classifier</span></div>
+                        <div class="info-item"><span class="info-label">Architecture:</span> <span class="info-value">DynamicCNN (PyTorch)</span></div>
+                        <div class="info-item"><span class="info-label">Total Classes:</span> <span class="info-value">38</span></div>
+                        <div class="info-item"><span class="info-label">Total Parameters:</span> <span class="info-value">146,089</span></div>
+                        <div class="info-item"><span class="info-label">Input Image Size:</span> <span class="info-value">256 × 256 × 3 RGB</span></div>
+                        <div class="info-item"><span class="info-label">Normalization:</span> <span class="info-value">Mean = 0.5, Standard Deviation = 0.5</span></div>
+                        <div class="info-item full-width"><span class="info-label">Total Training Time:</span> <span class="info-value">436 minutes 32.3 seconds (approximately 7 hours 16 minutes 32 seconds)</span></div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>Model Performance</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Test Accuracy:</span> <span class="info-value">99.061%</span></div>
+                        <div class="info-item"><span class="info-label">Macro F1-Score:</span> <span class="info-value">0.99042</span></div>
+                        <div class="info-item"><span class="info-label">Weighted F1-Score:</span> <span class="info-value">0.99058</span></div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>Training Information</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Training Images:</span> <span class="info-value">70,295</span></div>
+                        <div class="info-item"><span class="info-label">Validation Images:</span> <span class="info-value">14,057</span></div>
+                        <div class="info-item"><span class="info-label">Test Images:</span> <span class="info-value">3,515</span></div>
+                        <div class="info-item"><span class="info-label">Total Epochs:</span> <span class="info-value">100</span></div>
+                        <div class="info-item"><span class="info-label">Best Epoch:</span> <span class="info-value">99</span></div>
+                        <div class="info-item"><span class="info-label">Optimizer:</span> <span class="info-value">AdamW</span></div>
+                        <div class="info-item"><span class="info-label">Weight Decay:</span> <span class="info-value">0.0001</span></div>
+                        <div class="info-item"><span class="info-label">Learning Rate Scheduler:</span> <span class="info-value">CosineAnnealingLR</span></div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>Model Architecture</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Convolutional Layers:</span> <span class="info-value">3</span></div>
+                        <div class="info-item full-width"><span class="info-label">Channels:</span> <span class="info-value">32 → 64 → 128</span></div>
+                        <div class="info-item full-width"><span class="info-label">Each block:</span> <span class="info-value">Conv2d → BatchNorm → ReLU → MaxPool</span></div>
+                        <div class="info-item full-width"><span class="info-label">Classifier:</span> <span class="info-value">AdaptiveAvgPool2d → Flatten → Dropout(0.4) → FC(256) → ReLU → Dropout(0.3) → FC(64) → ReLU → Dropout(0.3) → FC(38)</span></div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>Best Hyperparameters</h3>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">n_conv_layers:</span> <span class="info-value">3</span></div>
+                        <div class="info-item"><span class="info-label">n_fc_layers:</span> <span class="info-value">2</span></div>
+                        <div class="info-item"><span class="info-label">fc_units1:</span> <span class="info-value">256</span></div>
+                        <div class="info-item"><span class="info-label">fc_units2:</span> <span class="info-value">64</span></div>
+                        <div class="info-item"><span class="info-label">learning_rate:</span> <span class="info-value">0.00558</span></div>
+                    </div>
+                </section>
+
+                <section class="info-section">
+                    <h3>Supported Classes</h3>
+                    <input type="text" id="classSearchInput" class="class-search" placeholder="Search by index or class name...">
+                    <div class="classes-container" id="classesContainer">
+                        <div class="class-item" data-index="0" data-name="Apple___Apple_scab"><span class="class-index">0</span> <span class="class-name">Apple___Apple_scab</span></div>
+                        <div class="class-item" data-index="1" data-name="Apple___Black_rot"><span class="class-index">1</span> <span class="class-name">Apple___Black_rot</span></div>
+                        <div class="class-item" data-index="2" data-name="Apple___Cedar_apple_rust"><span class="class-index">2</span> <span class="class-name">Apple___Cedar_apple_rust</span></div>
+                        <div class="class-item" data-index="3" data-name="Apple___healthy"><span class="class-index">3</span> <span class="class-name">Apple___healthy</span></div>
+                        <div class="class-item" data-index="4" data-name="Blueberry___healthy"><span class="class-index">4</span> <span class="class-name">Blueberry___healthy</span></div>
+                        <div class="class-item" data-index="5" data-name="Cherry_(including_sour)___Powdery_mildew"><span class="class-index">5</span> <span class="class-name">Cherry_(including_sour)___Powdery_mildew</span></div>
+                        <div class="class-item" data-index="6" data-name="Cherry_(including_sour)___healthy"><span class="class-index">6</span> <span class="class-name">Cherry_(including_sour)___healthy</span></div>
+                        <div class="class-item" data-index="7" data-name="Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot"><span class="class-index">7</span> <span class="class-name">Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot</span></div>
+                        <div class="class-item" data-index="8" data-name="Corn_(maize)___Common_rust_"><span class="class-index">8</span> <span class="class-name">Corn_(maize)___Common_rust_</span></div>
+                        <div class="class-item" data-index="9" data-name="Corn_(maize)___Northern_Leaf_Blight"><span class="class-index">9</span> <span class="class-name">Corn_(maize)___Northern_Leaf_Blight</span></div>
+                        <div class="class-item" data-index="10" data-name="Corn_(maize)___healthy"><span class="class-index">10</span> <span class="class-name">Corn_(maize)___healthy</span></div>
+                        <div class="class-item" data-index="11" data-name="Grape___Black_rot"><span class="class-index">11</span> <span class="class-name">Grape___Black_rot</span></div>
+                        <div class="class-item" data-index="12" data-name="Grape___Esca_(Black_Measles)"><span class="class-index">12</span> <span class="class-name">Grape___Esca_(Black_Measles)</span></div>
+                        <div class="class-item" data-index="13" data-name="Grape___Leaf_blight_(Isariopsis_Leaf_Spot)"><span class="class-index">13</span> <span class="class-name">Grape___Leaf_blight_(Isariopsis_Leaf_Spot)</span></div>
+                        <div class="class-item" data-index="14" data-name="Grape___healthy"><span class="class-index">14</span> <span class="class-name">Grape___healthy</span></div>
+                        <div class="class-item" data-index="15" data-name="Orange___Haunglongbing_(Citrus_greening)"><span class="class-index">15</span> <span class="class-name">Orange___Haunglongbing_(Citrus_greening)</span></div>
+                        <div class="class-item" data-index="16" data-name="Peach___Bacterial_spot"><span class="class-index">16</span> <span class="class-name">Peach___Bacterial_spot</span></div>
+                        <div class="class-item" data-index="17" data-name="Peach___healthy"><span class="class-index">17</span> <span class="class-name">Peach___healthy</span></div>
+                        <div class="class-item" data-index="18" data-name="Pepper,_bell___Bacterial_spot"><span class="class-index">18</span> <span class="class-name">Pepper,_bell___Bacterial_spot</span></div>
+                        <div class="class-item" data-index="19" data-name="Pepper,_bell___healthy"><span class="class-index">19</span> <span class="class-name">Pepper,_bell___healthy</span></div>
+                        <div class="class-item" data-index="20" data-name="Potato___Early_blight"><span class="class-index">20</span> <span class="class-name">Potato___Early_blight</span></div>
+                        <div class="class-item" data-index="21" data-name="Potato___Late_blight"><span class="class-index">21</span> <span class="class-name">Potato___Late_blight</span></div>
+                        <div class="class-item" data-index="22" data-name="Potato___healthy"><span class="class-index">22</span> <span class="class-name">Potato___healthy</span></div>
+                        <div class="class-item" data-index="23" data-name="Raspberry___healthy"><span class="class-index">23</span> <span class="class-name">Raspberry___healthy</span></div>
+                        <div class="class-item" data-index="24" data-name="Soybean___healthy"><span class="class-index">24</span> <span class="class-name">Soybean___healthy</span></div>
+                        <div class="class-item" data-index="25" data-name="Squash___Powdery_mildew"><span class="class-index">25</span> <span class="class-name">Squash___Powdery_mildew</span></div>
+                        <div class="class-item" data-index="26" data-name="Strawberry___Leaf_scorch"><span class="class-index">26</span> <span class="class-name">Strawberry___Leaf_scorch</span></div>
+                        <div class="class-item" data-index="27" data-name="Strawberry___healthy"><span class="class-index">27</span> <span class="class-name">Strawberry___healthy</span></div>
+                        <div class="class-item" data-index="28" data-name="Tomato___Bacterial_spot"><span class="class-index">28</span> <span class="class-name">Tomato___Bacterial_spot</span></div>
+                        <div class="class-item" data-index="29" data-name="Tomato___Early_blight"><span class="class-index">29</span> <span class="class-name">Tomato___Early_blight</span></div>
+                        <div class="class-item" data-index="30" data-name="Tomato___Late_blight"><span class="class-index">30</span> <span class="class-name">Tomato___Late_blight</span></div>
+                        <div class="class-item" data-index="31" data-name="Tomato___Leaf_Mold"><span class="class-index">31</span> <span class="class-name">Tomato___Leaf_Mold</span></div>
+                        <div class="class-item" data-index="32" data-name="Tomato___Septoria_leaf_spot"><span class="class-index">32</span> <span class="class-name">Tomato___Septoria_leaf_spot</span></div>
+                        <div class="class-item" data-index="33" data-name="Tomato___Spider_mites Two-spotted_spider_mite"><span class="class-index">33</span> <span class="class-name">Tomato___Spider_mites Two-spotted_spider_mite</span></div>
+                        <div class="class-item" data-index="34" data-name="Tomato___Target_Spot"><span class="class-index">34</span> <span class="class-name">Tomato___Target_Spot</span></div>
+                        <div class="class-item" data-index="35" data-name="Tomato___Tomato_Yellow_Leaf_Curl_Virus"><span class="class-index">35</span> <span class="class-name">Tomato___Tomato_Yellow_Leaf_Curl_Virus</span></div>
+                        <div class="class-item" data-index="36" data-name="Tomato___Tomato_mosaic_virus"><span class="class-index">36</span> <span class="class-name">Tomato___Tomato_mosaic_virus</span></div>
+                        <div class="class-item" data-index="37" data-name="Tomato___healthy"><span class="class-index">37</span> <span class="class-name">Tomato___healthy</span></div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

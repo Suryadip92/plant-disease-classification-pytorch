@@ -1,0 +1,14 @@
+# Inference dependencies (required to load the artifacts and predict).
+torch>=2.0
+torchvision>=0.15
+numpy>=1.24
+pillow>=9.0
+joblib>=1.2
+
+# Training / notebook dependencies (not required for inference).
+optuna>=3.0
+scikit-learn>=1.2
+pandas>=2.0
+torchinfo>=1.8
+matplotlib>=3.7
+ipykernel>=6.0
