@@ -36,7 +36,7 @@ Plant Disease Classification using PyTorch is an end-to-end image-based solution
 
 ## Project Structure
 
-`
+```
 Plant-Disease-Classification/
 ├── artifacts/
 │   ├── class_mapping.json
@@ -55,7 +55,7 @@ Plant-Disease-Classification/
 ├── plant_disease_inference.py
 ├── requirements.txt
 └── .gitignore
-`
+```
 
 ## Live Application Usage
 
@@ -68,43 +68,50 @@ Plant-Disease-Classification/
 ## Run Locally
 
 ### Prerequisites
+
 - Python 3.8+
 
 ### Setup
 
-1. Clone the repository
-`ash
+1. **Clone the repository**
+
+```bash
 git clone https://github.com/Suryadip92/plant-disease-classification-pytorch.git
 cd plant-disease-classification-pytorch
-`
+```
 
-2. Create and activate virtual environment (Windows)
-`ash
+2. **Create and activate virtual environment (Windows)**
+
+```bash
 python -m venv venv
 venv\Scripts\activate
-`
+```
 
-3. Install dependencies
-`ash
+3. **Install dependencies**
+
+```bash
 pip install -r requirements.txt
-`
+```
 
-4. Start the FastAPI server
-`ash
+4. **Start the FastAPI server**
+
+```bash
 uvicorn backend.main:app --host 127.0.0.1 --port 8000
-`
+```
 
-5. Open [http://127.0.0.1:8000/app](http://127.0.0.1:8000/app)
+5. **Open the application**
+
+Open [http://127.0.0.1:8000/app](http://127.0.0.1:8000/app) in your browser.
 
 ## Model Artifacts
 
 | File | Purpose |
 |---|---|
-| rtifacts/model.pt | Trained PyTorch model weights |
-| rtifacts/preprocessing_pipeline.joblib | Image preprocessing pipeline |
-| rtifacts/class_mapping.json | Class names and mappings |
-| rtifacts/model_config.json | Model configuration and metadata |
-| rtifacts/training_history.json | Training metrics history |
+| `artifacts/model.pt` | Trained PyTorch model weights |
+| `artifacts/preprocessing_pipeline.joblib` | Image preprocessing pipeline |
+| `artifacts/class_mapping.json` | Class names and mappings |
+| `artifacts/model_config.json` | Model configuration and metadata |
+| `artifacts/training_history.json` | Training metrics history |
 
 ## Deployment
 
